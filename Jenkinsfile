@@ -1,14 +1,14 @@
 pipeline{
-    agent {label "dev"}
-    stages {
-        stage("Code"){
+    agent any 
+    stages{
+        stage("Code Clone"){
             steps{
-            git url:"https://github.com/sarthujecrc/two-tier-flask-app.git",branch:"main"
+                git url:"https://github.com/sarthujecrc/two-tier-flask-app.git",branch:"main"
             }
         }
         stage("Build"){
             steps{
-                sh 'docker build -t sarthu/sarthakfullapp .'
+                sh 'docker build -t sarthu/sarthujecrcio  .'
             }
         }
         stage("Test"){
@@ -16,16 +16,16 @@ pipeline{
                 echo "test cases"
             }
         }
-        stage("Docker Hub"){
+        stage("Dockerhub"){
             steps{
                 withCredentials([usernamePassword(
-                    credentialsId:"dockerhubcred",
+                    credentialsId:"dockerhubme",
                     usernameVariable:"dockerhubuser",
                     passwordVariable:"dockerhubpass"
                     )]){
-                sh 'docker login -u $dockerhubuser -p $dockerhubpass'
-                sh 'docker image tag  sarthu/sarthakfullapp $dockerhubuser/sarthujecrcio'
-                sh 'docker push $dockerhubuser/sarthujecrcio'
+                sh 'docker login -u $dockerhubuser -p  $dockerhubpass'
+                sh 'docker image tag sarthu/sarthujecrcio  $dockerhubuser/sarthaksinghalbest'
+                sh 'docker push $dockerhubuser/sarthaksinghalbest'
                 }
             }
         }
