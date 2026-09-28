@@ -1,5 +1,5 @@
 pipeline{
-    agent {label "dev"}
+    agent any 
     stages{
         stage("Code Clone"){
             steps{
@@ -8,7 +8,7 @@ pipeline{
         }
         stage("Build"){
             steps{
-                sh 'docker build -t sarthu/sarthujecrcio  .'
+                sh 'docker build -t sarthu/sarthaksinghalbest .'
             }
         }
         stage("Test"){
@@ -16,16 +16,16 @@ pipeline{
                 echo "test cases"
             }
         }
-        stage("Dockerhub"){
+        stage("Docker hub"){
             steps{
                 withCredentials([usernamePassword(
-                    credentialsId:"dockerhubme",
+                    credentialsId:"dockerhubcredu",
                     usernameVariable:"dockerhubuser",
                     passwordVariable:"dockerhubpass"
                     )]){
                 sh 'docker login -u $dockerhubuser -p  $dockerhubpass'
-                sh 'docker image tag sarthu/sarthujecrcio  $dockerhubuser/sarthaksinghalbest'
-                sh 'docker push $dockerhubuser/sarthaksinghalbest'
+                sh 'docker image tag sarthu/sarthaksinghalbest $dockerhubuser/sarthakhubnio'
+                sh 'docker push $dockerhubuser/sarthakhubnio'
                 }
             }
         }
