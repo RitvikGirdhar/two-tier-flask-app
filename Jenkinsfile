@@ -1,37 +1,47 @@
-pipeline{
-    agent {label "dev"}
-    stages{
-        stage("Code Clone"){
-            steps{
-                git url:"https://github.com/sarthujecrc/two-tier-flask-app.git",branch:"main"
+pipeline {
+    agent any
+
+    stages {
+
+        stage("Code") {
+            steps {
+                git url: "https://github.com/RitvikGirdhar/two-tier-flask-app.git",
+                    branch: "main"
             }
         }
-        stage("Build"){
-            steps{
-                sh 'docker build -t sarthu/sarthaksinghalbest .'
+
+        stage("Build") {
+            steps {
+                sh 'docker build -t sarthu/sarthaksinghal:latest .'
             }
         }
-        stage("Test"){
-            steps{
+
+        stage("Test") {
+            steps {
                 echo "test cases"
             }
         }
-        stage("Docker hub"){
-            steps{
+
+        stage("Docker Hub") {
+            steps {
                 withCredentials([usernamePassword(
-                    credentialsId:"dockerhubcredu",
-                    usernameVariable:"dockerhubuser",
-                    passwordVariable:"dockerhubpass"
-                    )]){
-                sh 'docker login -u $dockerhubuser -p  $dockerhubpass'
-                sh 'docker image tag sarthu/sarthaksinghalbest $dockerhubuser/sarthakhubnio'
-                sh 'docker push $dockerhubuser/sarthakhubnio'
+                    credentialsId: "JiyaDockerHub",
+                    usernameVariable: "dockerhubuser",
+                    passwordVariable: "dockerhubpassword"
+                )]) {
+
+                    sh 'docker login -u "$dockerhubuser" -p "$dockerhubpassword"'
+
+                    sh 'docker image tag sarthu/sarthaksinghal:latest "$dockerhubuser/devking:latest"'
+
+                    sh 'docker push "$dockerhubuser/devking:latest"'
                 }
             }
         }
-        stage("Deploy"){
-            steps{
-                sh 'docker compose up -d '
+
+        stage("Deploy") {
+            steps {
+                sh 'docker compose up -d'
             }
         }
     }
